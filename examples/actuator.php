@@ -4,8 +4,6 @@ use GoSwoole\BaseServer\ExampleClass\Server\DefaultServer;
 use GoSwoole\BaseServer\Server\Config\PortConfig;
 use GoSwoole\BaseServer\Server\Config\ServerConfig;
 use GoSwoole\Plugins\Actuator\ActuatorPlugin;
-use GoSwoole\Plugins\Aop\AopConfig;
-use GoSwoole\Plugins\Aop\AopPlugin;
 use GoSwoole\Plugins\EasyRoute\EasyRouteConfig;
 use GoSwoole\Plugins\EasyRoute\EasyRoutePlugin;
 use GoSwoole\Plugins\EasyRoute\ExampleClass\TestController;
@@ -37,8 +35,6 @@ $server->addPort("http", $httpPortConfig);
 $server->addPort("ws", $wsPortConfig);
 //添加插件
 $server->getPlugManager()->addPlug(new ActuatorPlugin());
-$aopPlugin = new AopPlugin(new AopConfig());
-$server->getPlugManager()->addPlug($aopPlugin);
 //添加进程
 $server->addProcess("test1");
 $server->addProcess("test2");//使用自定义实例

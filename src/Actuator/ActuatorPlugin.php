@@ -12,7 +12,9 @@ use FastRoute\RouteCollector;
 use GoSwoole\BaseServer\Plugins\Logger\GetLogger;
 use GoSwoole\BaseServer\Server\Context;
 use GoSwoole\BaseServer\Server\Plugin\AbstractPlugin;
+use GoSwoole\BaseServer\Server\Plugin\PluginInterfaceManager;
 use GoSwoole\Plugins\Actuator\Aspect\ActuatorAspect;
+use GoSwoole\Plugins\Aop\AopConfig;
 use GoSwoole\Plugins\Aop\AopPlugin;
 use function FastRoute\simpleDispatcher;
 
@@ -29,6 +31,23 @@ class ActuatorPlugin extends AbstractPlugin
         $this->atAfter(AopPlugin::class);
         //由于Aspect排序问题需要在EasyRoutePlugin之前加载
         $this->atBefore("GoSwoole\Plugins\EasyRoute\EasyRoutePlugin");
+    }
+
+    /**
+     * @param PluginInterfaceManager $pluginInterfaceManager
+     * @return mixed|void
+     * @throws \GoSwoole\BaseServer\Exception
+     */
+    public function onAdded(PluginInterfaceManager $pluginInterfaceManager)
+    {
+        parent::onAdded($pluginInterfaceManager);
+        $serverConfig = $pluginInterfaceManager->getServer()->getServerConfig();
+        $aopPlugin = $pluginInterfaceManager->getPlug(AopPlugin::class);
+        if ($aopPlugin == null) {
+            $aopConfig = new AopConfig($serverConfig->getVendorDir() . "/go-swoole/base-server");
+            $aopPlugin = new AopPlugin($aopConfig);
+            $pluginInterfaceManager->addPlug($aopPlugin);
+        }
     }
 
     /**

@@ -1,12 +1,12 @@
 <?php
 
-use GoSwoole\BaseServer\ExampleClass\Server\DefaultServer;
-use GoSwoole\BaseServer\Server\Config\PortConfig;
-use GoSwoole\BaseServer\Server\Config\ServerConfig;
-use GoSwoole\Plugins\Actuator\ActuatorPlugin;
-use GoSwoole\Plugins\EasyRoute\EasyRouteConfig;
-use GoSwoole\Plugins\EasyRoute\EasyRoutePlugin;
-use GoSwoole\Plugins\EasyRoute\ExampleClass\TestController;
+use ESD\BaseServer\ExampleClass\Server\DefaultServer;
+use ESD\BaseServer\Server\Config\PortConfig;
+use ESD\BaseServer\Server\Config\ServerConfig;
+use ESD\Plugins\Actuator\ActuatorPlugin;
+use ESD\Plugins\EasyRoute\EasyRouteConfig;
+use ESD\Plugins\EasyRoute\EasyRoutePlugin;
+use ESD\Plugins\EasyRoute\ExampleClass\TestController;
 
 require __DIR__ . '/../vendor/autoload.php';
 

@@ -6,16 +6,16 @@
  * Time: 14:42
  */
 
-namespace GoSwoole\Plugins\Actuator;
+namespace ESD\Plugins\Actuator;
 
 use FastRoute\RouteCollector;
-use GoSwoole\BaseServer\Plugins\Logger\GetLogger;
-use GoSwoole\BaseServer\Server\Context;
-use GoSwoole\BaseServer\Server\Plugin\AbstractPlugin;
-use GoSwoole\BaseServer\Server\Plugin\PluginInterfaceManager;
-use GoSwoole\Plugins\Actuator\Aspect\ActuatorAspect;
-use GoSwoole\Plugins\Aop\AopConfig;
-use GoSwoole\Plugins\Aop\AopPlugin;
+use ESD\BaseServer\Plugins\Logger\GetLogger;
+use ESD\BaseServer\Server\Context;
+use ESD\BaseServer\Server\Plugin\AbstractPlugin;
+use ESD\BaseServer\Server\Plugin\PluginInterfaceManager;
+use ESD\Plugins\Actuator\Aspect\ActuatorAspect;
+use ESD\Plugins\Aop\AopConfig;
+use ESD\Plugins\Aop\AopPlugin;
 use function FastRoute\simpleDispatcher;
 
 ;
@@ -30,13 +30,13 @@ class ActuatorPlugin extends AbstractPlugin
         //需要aop的支持，所以放在aop后加载
         $this->atAfter(AopPlugin::class);
         //由于Aspect排序问题需要在EasyRoutePlugin之前加载
-        $this->atBefore("GoSwoole\Plugins\EasyRoute\EasyRoutePlugin");
+        $this->atBefore("ESD\Plugins\EasyRoute\EasyRoutePlugin");
     }
 
     /**
      * @param PluginInterfaceManager $pluginInterfaceManager
      * @return mixed|void
-     * @throws \GoSwoole\BaseServer\Exception
+     * @throws \ESD\BaseServer\Exception
      */
     public function onAdded(PluginInterfaceManager $pluginInterfaceManager)
     {
@@ -44,7 +44,7 @@ class ActuatorPlugin extends AbstractPlugin
         $serverConfig = $pluginInterfaceManager->getServer()->getServerConfig();
         $aopPlugin = $pluginInterfaceManager->getPlug(AopPlugin::class);
         if ($aopPlugin == null) {
-            $aopConfig = new AopConfig($serverConfig->getVendorDir() . "/go-swoole/base-server");
+            $aopConfig = new AopConfig($serverConfig->getVendorDir() . "/esd/base-server");
             $aopPlugin = new AopPlugin($aopConfig);
             $pluginInterfaceManager->addPlug($aopPlugin);
         }
@@ -76,7 +76,7 @@ class ActuatorPlugin extends AbstractPlugin
         //AOP注入
         $aopPlugin = $context->getServer()->getPlugManager()->getPlug(AopPlugin::class);
         if ($aopPlugin instanceof AopPlugin) {
-            $aopPlugin->getAopConfig()->addIncludePath($serverConfig->getVendorDir() . "/go-swoole/base-server");
+            $aopPlugin->getAopConfig()->addIncludePath($serverConfig->getVendorDir() . "/esd/base-server");
             $aopPlugin->getAopConfig()->addAspect(new ActuatorAspect($actuatorController, $dispatcher));
         } else {
             $this->error("没有添加AOP插件，Actuator无法工作");

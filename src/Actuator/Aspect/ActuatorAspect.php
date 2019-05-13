@@ -6,16 +6,16 @@
  * Time: 14:54
  */
 
-namespace GoSwoole\Plugins\Actuator\Aspect;
+namespace ESD\Plugins\Actuator\Aspect;
 
 
 use FastRoute\Dispatcher;
 use Go\Aop\Aspect;
 use Go\Aop\Intercept\MethodInvocation;
 use Go\Lang\Annotation\Around;
-use GoSwoole\BaseServer\Server\Beans\Request;
-use GoSwoole\BaseServer\Server\Server;
-use GoSwoole\Plugins\Actuator\ActuatorController;
+use ESD\BaseServer\Server\Beans\Request;
+use ESD\BaseServer\Server\Server;
+use ESD\Plugins\Actuator\ActuatorController;
 
 class ActuatorAspect implements Aspect
 {
@@ -38,7 +38,7 @@ class ActuatorAspect implements Aspect
      * around onHttpRequest
      *
      * @param MethodInvocation $invocation Invocation
-     * @Around("within(GoSwoole\BaseServer\Server\IServerPort+) && execution(public **->onHttpRequest(*))")
+     * @Around("within(ESD\BaseServer\Server\IServerPort+) && execution(public **->onHttpRequest(*))")
      * @return mixed|null
      */
     protected function aroundRequest(MethodInvocation $invocation)

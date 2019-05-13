@@ -6,11 +6,11 @@
  * Time: 17:37
  */
 
-namespace GoSwoole\Plugins\Actuator;
+namespace ESD\Plugins\Actuator;
 
 /**
  * Class ActuatorController
- * @package GoSwoole\Plugins\Actuator
+ * @package ESD\Plugins\Actuator
  */
 class ActuatorController
 {

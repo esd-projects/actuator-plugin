@@ -9,13 +9,13 @@
 namespace ESD\Plugins\Actuator\Aspect;
 
 
+use ESD\BaseServer\Server\Beans\Request;
+use ESD\BaseServer\Server\Server;
+use ESD\Plugins\Actuator\ActuatorController;
 use FastRoute\Dispatcher;
 use Go\Aop\Aspect;
 use Go\Aop\Intercept\MethodInvocation;
 use Go\Lang\Annotation\Around;
-use ESD\BaseServer\Server\Beans\Request;
-use ESD\BaseServer\Server\Server;
-use ESD\Plugins\Actuator\ActuatorController;
 
 class ActuatorAspect implements Aspect
 {
@@ -59,7 +59,7 @@ class ActuatorAspect implements Aspect
                     $className = $routeInfo[1];
                     $vars = $routeInfo[2]; // 获取请求参数
                     $response->addHeader("Content-Type", "application/json; charset=utf-8");
-                    $response->end($this->actuatorController->$className($vars));
+                    $response->end(call_user_func([$this->actuatorController, $className], $vars));
                     return null;
             }
         } catch (\Throwable $e) {

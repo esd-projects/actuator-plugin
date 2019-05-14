@@ -8,14 +8,15 @@
 
 namespace ESD\Plugins\Actuator;
 
-use FastRoute\RouteCollector;
 use ESD\BaseServer\Plugins\Logger\GetLogger;
 use ESD\BaseServer\Server\Context;
 use ESD\BaseServer\Server\Plugin\AbstractPlugin;
 use ESD\BaseServer\Server\Plugin\PluginInterfaceManager;
+use ESD\BaseServer\Server\Server;
 use ESD\Plugins\Actuator\Aspect\ActuatorAspect;
 use ESD\Plugins\Aop\AopConfig;
 use ESD\Plugins\Aop\AopPlugin;
+use FastRoute\RouteCollector;
 use function FastRoute\simpleDispatcher;
 
 ;
@@ -36,16 +37,16 @@ class ActuatorPlugin extends AbstractPlugin
     /**
      * @param PluginInterfaceManager $pluginInterfaceManager
      * @return mixed|void
+     * @throws \ReflectionException
+     * @throws \DI\DependencyException
      * @throws \ESD\BaseServer\Exception
      */
     public function onAdded(PluginInterfaceManager $pluginInterfaceManager)
     {
         parent::onAdded($pluginInterfaceManager);
-        $serverConfig = $pluginInterfaceManager->getServer()->getServerConfig();
         $aopPlugin = $pluginInterfaceManager->getPlug(AopPlugin::class);
         if ($aopPlugin == null) {
-            $aopConfig = new AopConfig($serverConfig->getVendorDir() . "/esd/base-server");
-            $aopPlugin = new AopPlugin($aopConfig);
+            $aopPlugin = new AopPlugin();
             $pluginInterfaceManager->addPlug($aopPlugin);
         }
     }
@@ -60,27 +61,35 @@ class ActuatorPlugin extends AbstractPlugin
     }
 
     /**
-     * 在服务启动前
      * @param Context $context
-     * @return mixed
+     * @return mixed|void
+     * @throws \DI\DependencyException
+     * @throws \DI\NotFoundException
+     * @throws \ESD\BaseServer\Exception
      */
-    public function beforeServerStart(Context $context)
+    public function init(Context $context)
     {
-        $serverConfig = $context->getServer()->getServerConfig();
+        parent::init($context);
+        $serverConfig = Server::$instance->getServerConfig();
+        $aopConfig = Server::$instance->getContainer()->get(AopConfig::class);
         $actuatorController = new ActuatorController();
         $dispatcher = simpleDispatcher(function (RouteCollector $r) {
             $r->addRoute("GET", "/actuator", "index");
             $r->addRoute("GET", "/actuator/health", "health");
             $r->addRoute("GET", "/actuator/info", "info");
         });
-        //AOP注入
-        $aopPlugin = $context->getServer()->getPlugManager()->getPlug(AopPlugin::class);
-        if ($aopPlugin instanceof AopPlugin) {
-            $aopPlugin->getAopConfig()->addIncludePath($serverConfig->getVendorDir() . "/esd/base-server");
-            $aopPlugin->getAopConfig()->addAspect(new ActuatorAspect($actuatorController, $dispatcher));
-        } else {
-            $this->error("没有添加AOP插件，Actuator无法工作");
-        }
+        $aopConfig->addIncludePath($serverConfig->getVendorDir() . "/esd/base-server");
+        $aopConfig->addAspect(new ActuatorAspect($actuatorController, $dispatcher));
+    }
+
+    /**
+     * 在服务启动前
+     * @param Context $context
+     * @return mixed
+     */
+    public function beforeServerStart(Context $context)
+    {
+        return;
     }
 
     /**

@@ -12,12 +12,12 @@ namespace ESD\Plugins\Actuator\Aspect;
 use ESD\BaseServer\Server\Beans\Request;
 use ESD\BaseServer\Server\Server;
 use ESD\Plugins\Actuator\ActuatorController;
+use ESD\Plugins\Aop\OrderAspect;
 use FastRoute\Dispatcher;
-use Go\Aop\Aspect;
 use Go\Aop\Intercept\MethodInvocation;
 use Go\Lang\Annotation\Around;
 
-class ActuatorAspect implements Aspect
+class ActuatorAspect extends OrderAspect
 {
     /**
      * @var ActuatorController
@@ -67,5 +67,13 @@ class ActuatorAspect implements Aspect
             $log->error($e);
         }
         return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return "ActuatorAspect";
     }
 }

@@ -9,8 +9,8 @@
 namespace ESD\Plugins\Actuator\Aspect;
 
 
-use ESD\BaseServer\Server\Beans\Request;
-use ESD\BaseServer\Server\Server;
+use ESD\Core\Plugins\Logger\GetLogger;
+use ESD\Core\Server\Beans\Request;
 use ESD\Plugins\Actuator\ActuatorController;
 use ESD\Plugins\Aop\OrderAspect;
 use FastRoute\Dispatcher;
@@ -19,6 +19,7 @@ use Go\Lang\Annotation\Around;
 
 class ActuatorAspect extends OrderAspect
 {
+    use GetLogger;
     /**
      * @var ActuatorController
      */
@@ -38,8 +39,10 @@ class ActuatorAspect extends OrderAspect
      * around onHttpRequest
      *
      * @param MethodInvocation $invocation Invocation
-     * @Around("within(ESD\BaseServer\Server\IServerPort+) && execution(public **->onHttpRequest(*))")
      * @return mixed|null
+     * @throws \DI\DependencyException
+     * @throws \DI\NotFoundException
+     * @Around("within(ESD\Core\Server\Port\IServerPort+) && execution(public **->onHttpRequest(*))")
      */
     protected function aroundRequest(MethodInvocation $invocation)
     {
@@ -63,8 +66,7 @@ class ActuatorAspect extends OrderAspect
                     return null;
             }
         } catch (\Throwable $e) {
-            $log = Server::$instance->getLog();
-            $log->error($e);
+            $this->error($e);
         }
         return null;
     }

@@ -8,18 +8,17 @@
 
 namespace ESD\Plugins\Actuator;
 
-use ESD\BaseServer\Plugins\Logger\GetLogger;
-use ESD\BaseServer\Server\Context;
-use ESD\BaseServer\Server\Plugin\AbstractPlugin;
-use ESD\BaseServer\Server\Plugin\PluginInterfaceManager;
-use ESD\BaseServer\Server\Server;
+use ESD\Core\Context\Context;
+use ESD\Core\PlugIn\AbstractPlugin;
+use ESD\Core\PlugIn\PluginInterfaceManager;
+use ESD\Core\Plugins\Logger\GetLogger;
+use ESD\Core\Server\Server;
 use ESD\Plugins\Actuator\Aspect\ActuatorAspect;
 use ESD\Plugins\Aop\AopConfig;
 use ESD\Plugins\Aop\AopPlugin;
 use FastRoute\RouteCollector;
 use function FastRoute\simpleDispatcher;
 
-;
 
 class ActuatorPlugin extends AbstractPlugin
 {
@@ -37,9 +36,10 @@ class ActuatorPlugin extends AbstractPlugin
     /**
      * @param PluginInterfaceManager $pluginInterfaceManager
      * @return mixed|void
-     * @throws \ReflectionException
      * @throws \DI\DependencyException
-     * @throws \ESD\BaseServer\Exception
+     * @throws \DI\NotFoundException
+     * @throws \ESD\Core\Exception
+     * @throws \ReflectionException
      */
     public function onAdded(PluginInterfaceManager $pluginInterfaceManager)
     {
@@ -65,13 +65,13 @@ class ActuatorPlugin extends AbstractPlugin
      * @return mixed|void
      * @throws \DI\DependencyException
      * @throws \DI\NotFoundException
-     * @throws \ESD\BaseServer\Exception
+     * @throws \ESD\Core\Exception
      */
     public function init(Context $context)
     {
         parent::init($context);
         $serverConfig = Server::$instance->getServerConfig();
-        $aopConfig = Server::$instance->getContainer()->get(AopConfig::class);
+        $aopConfig = DIget(AopConfig::class);
         $actuatorController = new ActuatorController();
         $dispatcher = simpleDispatcher(function (RouteCollector $r) {
             $r->addRoute("GET", "/actuator", "index");

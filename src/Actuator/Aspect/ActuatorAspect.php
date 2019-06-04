@@ -45,27 +45,24 @@ class ActuatorAspect extends OrderAspect
      */
     protected function aroundRequest(MethodInvocation $invocation)
     {
-        try {
-            list($request, $response) = $invocation->getArguments();
-            $routeInfo = $this->dispatcher->dispatch($request->getServer(Request::SERVER_REQUEST_METHOD), $request->getServer(Request::SERVER_REQUEST_URI));
-            switch ($routeInfo[0]) {
-                case Dispatcher::NOT_FOUND:
-                    return $invocation->proceed();
-                case Dispatcher::METHOD_NOT_ALLOWED:
-                    $response->withStatus(405);
-                    $response->withHeader("Content-Type", "text/html; charset=utf-8");
-                    $response->withContent("不支持的请求方法");
-                    return null;
-                case Dispatcher::FOUND: // 找到对应的方法
-                    $className = $routeInfo[1];
-                    $vars = $routeInfo[2]; // 获取请求参数
-                    $response->withHeader("Content-Type", "application/json; charset=utf-8");
-                    $response->withContent(call_user_func([$this->actuatorController, $className], $vars));
-                    return null;
-            }
-        } catch (\Throwable $e) {
-            $this->error($e);
+        list($request, $response) = $invocation->getArguments();
+        $routeInfo = $this->dispatcher->dispatch($request->getServer(Request::SERVER_REQUEST_METHOD), $request->getServer(Request::SERVER_REQUEST_URI));
+        switch ($routeInfo[0]) {
+            case Dispatcher::NOT_FOUND:
+                return $invocation->proceed();
+            case Dispatcher::METHOD_NOT_ALLOWED:
+                $response->withStatus(405);
+                $response->withHeader("Content-Type", "text/html; charset=utf-8");
+                $response->withContent("不支持的请求方法");
+                return null;
+            case Dispatcher::FOUND: // 找到对应的方法
+                $className = $routeInfo[1];
+                $vars = $routeInfo[2]; // 获取请求参数
+                $response->withHeader("Content-Type", "application/json; charset=utf-8");
+                $response->withContent(call_user_func([$this->actuatorController, $className], $vars));
+                return null;
         }
+
         return null;
     }
 

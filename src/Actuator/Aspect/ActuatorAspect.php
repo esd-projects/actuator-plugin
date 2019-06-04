@@ -33,6 +33,7 @@ class ActuatorAspect extends OrderAspect
     {
         $this->actuatorController = $actuatorController;
         $this->dispatcher = $dispatcher;
+        $this->atBefore("ESD\Plugins\EasyRoute\Aspect\RouteAspect");
     }
 
     /**
@@ -40,8 +41,6 @@ class ActuatorAspect extends OrderAspect
      *
      * @param MethodInvocation $invocation Invocation
      * @return mixed|null
-     * @throws \DI\DependencyException
-     * @throws \DI\NotFoundException
      * @Around("within(ESD\Core\Server\Port\IServerPort+) && execution(public **->onHttpRequest(*))")
      */
     protected function aroundRequest(MethodInvocation $invocation)

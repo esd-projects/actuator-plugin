@@ -16,7 +16,7 @@ class ActuatorController
 {
     public function index()
     {
-        return json_encode(["status"=>"UP"]);
+        return json_encode(["status" => "UP", "server" => "esd-server"]);
     }
 
     public function health()
@@ -26,6 +26,6 @@ class ActuatorController
 
     public function info()
     {
-        return json_encode(["status"=>"UP"]);
+        return json_encode(["server" => "esd-server"]);
     }
 }
